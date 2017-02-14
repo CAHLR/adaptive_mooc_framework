@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var RecentSchema = new Schema({
-    user: String,
+    anonID: String,
     recentId: String
 });
 

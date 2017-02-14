@@ -3,12 +3,12 @@ var chap;
 var seq;
 var vert;
 var origin;
-var userid;
+var anonID;
 var myId;
 
 // get the data from the vertical
 function get_data(callback) {
-  userid = analytics.user().anonymousId;
+  anonID = analytics.anonID().anonymousId;
   var url = window.location.href;
   var split = url.split("/");
   chap = split[6];
@@ -19,7 +19,7 @@ function get_data(callback) {
   callback();
 }
 
-// log userid and current vertical to the mongo db
+// log anonID and current vertical to the mongo db
 function log_data () {
   var settings = {
     "async": true,
@@ -28,13 +28,13 @@ function log_data () {
     "method": "POST",
     "data":
     {
-      "user": userid,
+      "anonID": anonID,
       "origin": origin
     }
   };
   $.ajax(settings).done(function (response) {
     myId = response.id;
-    //  if (userid % 2 == 1) {
+    //  if (anonID % 2 == 1) {
       get_rec();
     // }
   });
@@ -49,7 +49,7 @@ var settings = {
   "method": "POST",
   "data":
   {
-    "user": userid,
+    "anonID": anonID,
     "myId": myId
   },
   success: function(response) {

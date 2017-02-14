@@ -116,7 +116,7 @@ router.route('/events')
         // creates a new event
         var event = new Event();
         var my_id = event._id;
-        event.user = req.body.user;
+        event.anonID = req.body.anonID;
 
         try {
           var parts = req.body.origin.split("/");
@@ -134,13 +134,13 @@ router.route('/events')
         }
 
         event.timestamp = timestamp;
-        event.recommendation = "-1"; // defaults to -1 but changed when user clicks on recommendation
-        event.timeSeq = "2"; // defaults to 2 but changed when user makes the next event
-        event.followed = "0"; // defaults to 0 but changed when user clicks on recommendation
+        event.recommendation = "-1"; // defaults to -1 but changed when student clicks on recommendation
+        event.timeSeq = "2"; // defaults to 2 but changed when student makes the next event
+        event.followed = "0"; // defaults to 0 but changed when student clicks on recommendation
 
         // check if there is an entry for this student in the recent db
         Recent.find(
-          {user: req.body.user},
+          {anonID: req.body.anonID},
           function(err, old_recent) {
 
             // recent entry exists
@@ -176,7 +176,7 @@ router.route('/events')
             else {
               var new_recent = new Recent();
               new_recent.recentId = my_id;
-              new_recent.user = req.body.user;
+              new_recent.anonID = req.body.anonID;
               new_recent.save(function(err) {
                 if (err) {
                   res.end();
@@ -278,10 +278,10 @@ router.route('/events/:event_id')
    router.route('/rec')
        // get the recommendation (accessed at POST http://server:1334/rec)
        .post(function(req, res) {
-             var user = req.body.user;
+             var anonID = req.body.anonID;
              var myId = req.body.myId;
-             var querySeq = Event.find({"user":user}).sort("timestamp").select({ "origin": 1, "_id": 0});
-             var queryTime = Event.find({"user":user}).sort("timestamp").select({ "timeSeq": 1, "_id": 0});
+             var querySeq = Event.find({"anonID":anonID}).sort("timestamp").select({ "origin": 1, "_id": 0});
+             var queryTime = Event.find({"anonID":anonID}).sort("timestamp").select({ "timeSeq": 1, "_id": 0});
              var final = "";
              var rec_from_model;
 
