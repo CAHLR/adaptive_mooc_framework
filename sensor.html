@@ -1,0 +1,99 @@
+<script>
+var chap;
+var seq;
+var vert;
+var origin;
+var userid;
+var myId;
+
+// get the data from the vertical
+function get_data(callback) {
+  userid = analytics.user().anonymousId;
+  var url = window.location.href;
+  var split = url.split("/");
+  chap = split[6];
+  seq = split[7];
+  var block = $('#sequence-list .nav-item.active').data('id');
+  vert = block.split("@").pop();
+  origin = chap+"/"+seq+"/"+vert;
+  callback();
+}
+
+// log userid and current vertical to the mongo db
+function log_data () {
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "https://server:port/api/events",
+    "method": "POST",
+    "data":
+    {
+      "user": userid,
+      "origin": origin
+    }
+  };
+  $.ajax(settings).done(function (response) {
+    myId = response.id;
+    //  if (userid % 2 == 1) {
+      get_rec();
+    // }
+  });
+}
+
+// request a recommendation
+function get_rec () {
+var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "https://server:port/api/rec",
+  "method": "POST",
+  "data":
+  {
+    "user": userid,
+    "myId": myId
+  },
+  success: function(response) {
+    console.log(response.url, response.vertical, response.sequential);
+    $('#ch').text(response.sequential + ":");
+    $('#v').text(response.vertical);
+    $('#go').attr('href', "https://courses.edx.org/courses/course-v1:Course+Title/courseware/"+response.url);
+    $('#vert-link').attr('href', "https://courses.edx.org/courses/course-v1:Course+Title/courseware/"+response.url);
+    $('#container').css("display", "block");
+  }
+};
+$.ajax(settings);
+}
+
+window.onload = function () {
+  get_data(function() {
+    log_data();
+  });
+};
+
+// update whether or not the student followed the recommendation
+function update_followed() {
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "https://server:port/api/events/"+myId,
+    "method": "PUT",
+    "data":
+    {
+      "followed": "1"
+    },
+    success: function(response) {
+      console.log(response.message);
+    }
+  };
+  $.ajax(settings);
+}
+
+</script>
+
+<div id="container" style="height:130px; width:800px; padding: 20px;display: none;">
+<p style="font-size: 20px; font-weight:bold; font-style:italic;margin-bottom:0px">Suggestion for You</p>
+<p style="float:left; clear:left; margin-bottom:0px">Consider visiting:</p>
+<p style="float:left; clear:left; margin-top:0px; font-weight:bold;"><span id="ch"></span></p>
+  <a id="vert-link" href="#" onclick="update_followed()"><p style="float:left; margin-top:0px; margin-left: 5px; color: #0645AD; text-decoration:underline;"><span id="v"></span></p></a>
+<a id="go" href="#" onclick="update_followed()"><img src="http://server/img/button2.jpg" style="height: 62px;width: 150px;margin-left: 350px;margin-bottom: 50px;position: absolute;"></a>
+</div>
