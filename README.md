@@ -1,5 +1,6 @@
 # Personalized Next-Step Recommendation Framework
-This repo contains the code and mappings used in "Enabling Real-Time Adaptivity in MOOCs with A Personalized Next-Step Recommendation Framework" paper submitted to Learning at Scale 2017.
+This repo contains the code and mappings used in:
+Le. C.V., Pardos, Z.A., Meyer, S.D., Thorp, R. (in-press) Communication at Scale in a MOOC Using Predictive Engagement Analytics. To appear in Proceedings of the 19th International Conference on Artificial Intelligence in Education (AIED). London, UK. [pdf](http://people.ischool.berkeley.edu/~zp/papers/AIED_communication_at_scale.pdf)
 
 ## Sensor
 The sensor is plugged into the verticals of the edX course and is inputted as raw html. This code:
